@@ -1,0 +1,25 @@
+<!doctype html><html><head>
+<meta charset="utf-8"><title>Broker Quote Hub (semplice)</title>
+<style>body{font-family:system-ui;margin:24px} input,select,textarea{padding:8px;margin:4px 0;width:100%} .card{background:#fff;padding:16px;border:1px solid #ddd;border-radius:8px;margin:8px 0}</style>
+</head><body>
+<h1>Broker Quote Hub — semplice</h1>
+<div class="card">
+  <h3>Nuova richiesta</h3>
+  <form method="post" action="/new">
+    <label>Cliente</label><input name="customer_name" required>
+    <label>CF / P.IVA</label><input name="customer_tax_id" required>
+    <label>Ramo</label><select name="lob"><option>RCA</option><option>Casa</option></select>
+    <label>Note</label><textarea name="notes" rows="3"></textarea>
+    <button type="submit">Crea</button>
+  </form>
+</div>
+<h3>Richieste aperte</h3>
+{% for it in items %}
+  <div class="card">
+    <b>#{{it.id}}</b> — {{it.customer_name}} ({{it.lob}}) • <a href="/r/{{it.id}}">Apri</a><br>
+    <small>CF/P.IVA: {{it.customer_tax_id}} — {{it.created_at}}</small>
+  </div>
+{% else %}
+  <p>Nessuna richiesta ancora.</p>
+{% endfor %}
+</body></html>

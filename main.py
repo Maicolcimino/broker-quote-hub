@@ -1,9 +1,10 @@
-from fastapi import FastAPI, Request, UploadFile, File, Form, RedirectResponse
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi import FastAPI, Request, UploadFile, File, Form
+from fastapi.responses import HTMLResponse, StreamingResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from datetime import datetime
 import pathlib, asyncio
+
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")

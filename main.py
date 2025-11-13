@@ -69,3 +69,97 @@ async def stream(rid: int):
     return StreamingResponse(eventgen(), media_type="text/event-stream")
 python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+RCP_OPTIONS = {
+    "Sanitario": {
+        "professioni": {
+            "Medico": {
+                "massimali": ["€250.000", "€500.000", "€1.000.000", "€2.000.000"],
+                "retro": ["Nessuna", "2 anni", "5 anni", "Illimitata"],
+                "postuma": ["1 anno", "5 anni", "10 anni"]
+            },
+            "Infermiere": {
+                "massimali": ["€250.000", "€500.000", "€1.000.000"],
+                "retro": ["Nessuna", "2 anni", "5 anni"],
+                "postuma": ["1 anno", "5 anni"]
+            }
+        }
+    },
+    "Tecnico": {
+        "professioni": {
+            "Ingegnere": {
+                "massimali": ["€500.000", "€1.000.000", "€2.000.000"],
+                "retro": ["2 anni", "5 anni", "Illimitata"],
+                "postuma": ["1 anno", "5 anni", "10 anni"]
+            },
+            "Architetto": {
+                "massimali": ["€500.000", "€1.000.000"],
+                "retro": ["2 anni", "5 anni"],
+                "postuma": ["1 anno", "5 anni"]
+            }
+        }
+    },
+    "Legale": {
+        "professioni": {
+            "Avvocato": {
+                "massimali": ["€250.000", "€500.000", "€1.000.000"],
+                "retro": ["Nessuna", "5 anni", "Illimitata"],
+                "postuma": ["1 anno", "5 anni", "10 anni"]
+            }
+        }
+    },
+    "Economico": {
+        "professioni": {
+            "Commercialista": {
+                "massimali": ["€500.000", "€1.000.000"],
+                "retro": ["2 anni", "5 anni", "Illimitata"],
+                "postuma": ["1 anno", "5 anni"]
+            },
+            "Consulente del Lavoro": {
+                "massimali": ["€250.000", "€500.000", "€1.000.000"],
+                "retro": ["2 anni", "5 anni"],
+                "postuma": ["1 anno", "5 anni"]
+            }
+        }
+    }
+}
+
+@app.get("/rcp", response_class=HTMLResponse)
+def rcp_form(request: Request):
+    settori = sorted(RCP_OPTIONS.keys())
+    return templates.TemplateResponse(
+        "rcp.html",
+        {"request": request, "settori": settori, "options": RCP_OPTIONS}
+    )
+
+@app.post("/rcp/start")
+async def rcp_start(
+    settore: str = Form(...),
+    professione: str = Form(...),
+    massimale: str = Form(...),
+    retro: str = Form(...),
+    postuma: str = Form(...)
+):
+    global RID
+    REQUESTS[RID] = {
+        "id": RID,
+        "customer_name": "Da compilare",
+        "customer_tax_id": "Da compilare",
+        "lob": "RC Professionale",
+        "product": professione,
+        "notes": f"Settore: {settore} | Massimale: {massimale} | Retroattività: {retro} | Postuma: {postuma}",
+        "status": "Bozza",
+        "created_at": datetime.utcnow().isoformat()
+    }
+    MESSAGES[RID] = []
+    STREAMS[RID] = asyncio.Queue()
+    msg = {
+        "who": "system",
+        "text": f"Nuova richiesta RC Professionale per {professione}. Massimale {massimale}, retro {retro}, postuma {postuma}.",
+        "ts": datetime.utcnow().isoformat()
+    }
+    MESSAGES[RID].append(msg)
+    await STREAMS[RID].put(msg)
+    save_state()
+    rid = RID
+    RID += 1
+    return RedirectResponse(f"/r/{rid}", status_code=303)

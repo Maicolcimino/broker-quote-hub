@@ -1,0 +1,154 @@
+<!doctype html><html><head>
+<meta charset="utf-8"><title>RC Professionale — Parametri</title>
+<style>
+body{font-family:system-ui;margin:24px;background:#f4f6f8}
+h1{margin-bottom:8px}
+input,select{padding:8px;margin:4px 0;width:100%;box-sizing:border-box}
+.card{background:#fff;padding:16px;border:1px solid #ddd;border-radius:8px;margin:8px 0;box-shadow:0 2px 4px rgba(0,0,0,.04)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.btn{padding:8px 14px;border-radius:6px;border:0;cursor:pointer}
+.btn-primary{background:#2563eb;color:#fff}
+</style>
+</head><body>
+<h1>RC Professionale — Nuova richiesta</h1>
+<p><a href="/">← Torna alla dashboard</a></p>
+
+<div class="card">
+  <form method="post" action="/rcp/start" class="form-grid">
+    <div>
+      <label>Settore attività</label>
+      <select name="settore" id="settore" required>
+        <option value="">-- Seleziona settore --</option>
+        {% for s in settori %}
+          <option value="{{s}}">{{s}}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label>Professione</label>
+      <select name="professione" id="prof" required disabled>
+        <option value="">-- Seleziona professione --</option>
+      </select>
+    </div>
+    <div>
+      <label>Massimale</label>
+      <select name="massimale" id="massimale" required disabled>
+        <option value="">-- Seleziona massimale --</option>
+      </select>
+    </div>
+    <div>
+      <label>Retroattività</label>
+      <select name="retro" id="retro" required disabled>
+        <option value="">-- Seleziona retroattività --</option>
+      </select>
+    </div>
+    <div>
+      <label>Postuma</label>
+      <select name="postuma" id="postuma" required disabled>
+        <option value="">-- Seleziona postuma --</option>
+      </select>
+    </div>
+
+    <div style="grid-column:1/-1">
+      <h3>Documenti necessari</h3>
+      <ul id="docList"></ul>
+      <p id="docHint">Seleziona settore e professione per vedere i documenti richiesti.</p>
+    </div>
+
+    <div style="grid-column:1/-1;text-align:right">
+      <button type="submit" id="btnAvanti" class="btn btn-primary" disabled>Avanti ➜</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  const OPTIONS = {{ options|tojson }};
+  const settoreSel = document.getElementById('settore');
+  const profSel = document.getElementById('prof');
+  const massSel = document.getElementById('massimale');
+  const retroSel = document.getElementById('retro');
+  const postSel = document.getElementById('postuma');
+  const docList = document.getElementById('docList');
+  const docHint = document.getElementById('docHint');
+  const btnAvanti = document.getElementById('btnAvanti');
+
+  function resetSelect(sel, placeholder){
+    sel.innerHTML = '';
+    const opt=document.createElement('option');
+    opt.value=''; opt.textContent=placeholder;
+    sel.appendChild(opt);
+    sel.disabled=true;
+  }
+
+  function fillSelect(sel, values, placeholder){
+    resetSelect(sel, placeholder);
+    values.forEach(v=>{
+      const o=document.createElement('option');
+      o.value=v; o.textContent=v;
+      sel.appendChild(o);
+    });
+    sel.disabled=false;
+  }
+
+  function updateDocs(settore, professione){
+    docList.innerHTML='';
+    let docs=[];
+    if(settore==='Sanitario' && professione==='Medico'){
+      docs=['Questionario_RC_Medico.pdf','Albo_Professionale.pdf'];
+    }else if(settore==='Sanitario' && professione==='Infermiere'){
+      docs=['Questionario_RC_Infermiere.pdf'];
+    }else if(settore==='Tecnico' && professione==='Ingegnere'){
+      docs=['Questionario_RC_Ingegnere.pdf'];
+    }else if(settore==='Tecnico' && professione==='Architetto'){
+      docs=['Questionario_RC_Architetto.pdf'];
+    }else if(settore==='Legale' && professione==='Avvocato'){
+      docs=['Questionario_RC_Avvocato.pdf'];
+    }else if(settore==='Economico' && professione==='Commercialista'){
+      docs=['Questionario_RC_Commercialista.pdf'];
+    }else if(settore==='Economico' && professione==='Consulente del Lavoro'){
+      docs=['Questionario_RC_ConsulenteLavoro.pdf'];
+    }
+    if(docs.length){
+      docHint.style.display='none';
+      docs.forEach(d=>{const li=document.createElement('li');li.textContent=d;docList.appendChild(li);});
+    }else{
+      docHint.style.display='block';
+    }
+  }
+
+  function checkAvanti(){
+    btnAvanti.disabled = !(settoreSel.value && profSel.value && massSel.value && retroSel.value && postSel.value);
+  }
+
+  settoreSel.addEventListener('change', ()=>{
+    const s = settoreSel.value;
+    resetSelect(profSel,'-- Seleziona professione --');
+    resetSelect(massSel,'-- Seleziona massimale --');
+    resetSelect(retroSel,'-- Seleziona retroattività --');
+    resetSelect(postSel,'-- Seleziona postuma --');
+    docList.innerHTML=''; docHint.style.display='block';
+    if(!s){checkAvanti();return;}
+    const profs = Object.keys(OPTIONS[s].professioni);
+    fillSelect(profSel, profs, '-- Seleziona professione --');
+    checkAvanti();
+  });
+
+  profSel.addEventListener('change', ()=>{
+    const s = settoreSel.value;
+    const p = profSel.value;
+    resetSelect(massSel,'-- Seleziona massimale --');
+    resetSelect(retroSel,'-- Seleziona retroattività --');
+    resetSelect(postSel,'-- Seleziona postuma --');
+    docList.innerHTML=''; docHint.style.display='block';
+    if(!p){checkAvanti();return;}
+    const cfg = OPTIONS[s].professioni[p];
+    fillSelect(massSel, cfg.massimali, '-- Seleziona massimale --');
+    fillSelect(retroSel, cfg.retro, '-- Seleziona retroattività --');
+    fillSelect(postSel, cfg.postuma, '-- Seleziona postuma --');
+    updateDocs(s,p);
+    checkAvanti();
+  });
+
+  [massSel, retroSel, postSel].forEach(sel=>sel.addEventListener('change', checkAvanti));
+</script>
+</body></html>

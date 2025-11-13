@@ -67,3 +67,5 @@ async def stream(rid: int):
             m = await queue.get()
             yield f"data: {m['ts']} — {m['who']}: {m['text']}\n\n"
     return StreamingResponse(eventgen(), media_type="text/event-stream")
+python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload

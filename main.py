@@ -5,6 +5,8 @@ from fastapi.templating import Jinja2Templates
 from datetime import datetime
 import pathlib, asyncio
 
+TEST_USERNAME = "admin"
+TEST_PASSWORD = "password123"  # solo per test
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")

@@ -23,19 +23,32 @@ STREAMS = {}
 RID = 1
 
 
-# ---------------- LOGIN / LOGOUT ----------------
+# ---------------- LOGIN / LOGOUT / DASHBOARD ----------------
 
-@app.get("/login", response_class=HTMLResponse)
+@app.get("/", response_class=HTMLResponse)
 def login_form(req: Request):
+    """
+    Pagina di login.
+    Se l'utente è già loggato, lo mando direttamente in dashboard.
+    """
+    user = req.cookies.get("user")
+    if user:
+        return RedirectResponse(url="/dashboard", status_code=303)
     return templates.TemplateResponse("login.html", {"request": req, "error": None})
 
 
 @app.post("/login")
 def login(req: Request, username: str = Form(...), password: str = Form(...)):
+    """
+    Verifica le credenziali di test e, se corrette,
+    imposta il cookie e reindirizza SEMPRE alla dashboard.
+    """
     if username == TEST_USERNAME and password == TEST_PASSWORD:
-        resp = RedirectResponse(url="/", status_code=303)
+        resp = RedirectResponse(url="/dashboard", status_code=303)
         resp.set_cookie("user", username, httponly=True)
         return resp
+
+    # credenziali sbagliate: torno sulla login con messaggio di errore
     return templates.TemplateResponse(
         "login.html",
         {"request": req, "error": "Credenziali non valide."},
@@ -45,18 +58,23 @@ def login(req: Request, username: str = Form(...), password: str = Form(...)):
 
 @app.get("/logout")
 def logout():
-    resp = RedirectResponse(url="/login", status_code=303)
+    """
+    Cancella il cookie e torna alla pagina di login.
+    """
+    resp = RedirectResponse(url="/", status_code=303)
     resp.delete_cookie("user")
     return resp
 
 
-# ---------------- HOME / DASHBOARD ----------------
-
-@app.get("/", response_class=HTMLResponse)
-def home(req: Request):
+@app.get("/dashboard", response_class=HTMLResponse)
+def dashboard(req: Request):
+    """
+    Dashboard principale (quella con i tile).
+    Accessibile solo se loggato.
+    """
     user = req.cookies.get("user")
     if not user:
-        return RedirectResponse(url="/login", status_code=303)
+        return RedirectResponse(url="/", status_code=303)
     return templates.TemplateResponse(
         "index.html",
         {

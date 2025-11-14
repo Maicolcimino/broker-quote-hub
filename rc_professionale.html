@@ -1,14 +1,19 @@
 {% extends "base.html" %}
 {% block title %}Richiesta RC Professionale{% endblock %}
 {% block breadcrumb %}<a href="/">Home</a> / Richiesta RC Professionale{% endblock %}
+
 {% block content %}
 <div class="content-card" style="max-width:860px;margin:0 auto;">
   <h2 style="margin-top:0;">Richiesta RC Professionale</h2>
   <p style="font-size:0.9rem;margin-top:4px;margin-bottom:16px;">
-    Compila i dati del cliente e dell’attività professionale per ricevere una quotazione mirata.
+    Compila i dati per permetterci di formulare una quotazione accurata di RC Professionale.
   </p>
 
   <form method="post" action="/new" enctype="multipart/form-data">
+    {# ramo fisso #}
+    <input type="hidden" name="lob" value="RC Professionale">
+
+    <h3>Dati del cliente</h3>
     <div class="form-grid">
       <div>
         <label>Cliente</label>
@@ -18,34 +23,72 @@
         <label>CF / P.IVA</label>
         <input name="customer_tax_id" required>
       </div>
+    </div>
 
-      {# Ramo fisso, nascosto #}
-      <input type="hidden" name="lob" value="RC Professionale">
-
+    <h3 style="margin-top:24px;">Dati attività professionale</h3>
+    <div class="form-grid">
       <div>
         <label>Settore</label>
-        <input name="rc_settore" placeholder="Es: Edilizia, Fiscale/Tributario, Sanitario, IT, ecc.">
+        <select name="rc_settore" required>
+          <option value="">Seleziona…</option>
+          <option>Sanitario</option>
+          <option>Tecnico</option>
+          <option>Legale</option>
+          <option>Economico</option>
+          <option>Altro</option>
+        </select>
       </div>
 
       <div>
-        <label>Attività svolta</label>
-        <textarea name="rc_attivita" rows="2" placeholder="Descrivi in sintesi l’attività professionale (es. Ingegnere civile che si occupa di direzione lavori, collaudi, perizie, ecc.)"></textarea>
+        <label>Professione</label>
+        <select name="rc_professione" required>
+          <option value="">Seleziona…</option>
+          <optgroup label="Sanitario">
+            <option>Medico</option>
+            <option>Infermiere</option>
+            <option>Altro sanitario</option>
+          </optgroup>
+          <optgroup label="Tecnico">
+            <option>Ingegnere</option>
+            <option>Architetto</option>
+            <option>Geometra</option>
+            <option>Perito industriale</option>
+          </optgroup>
+          <optgroup label="Legale">
+            <option>Avvocato</option>
+            <option>Altro legale</option>
+          </optgroup>
+          <optgroup label="Economico">
+            <option>Commercialista</option>
+            <option>Consulente del Lavoro</option>
+            <option>Altro economico</option>
+          </optgroup>
+          <optgroup label="Altro">
+            <option>Consulente</option>
+            <option>Altro</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div style="grid-column:1/-1">
+        <label>Descrizione attività svolta</label>
+        <textarea name="rc_attivita" rows="2" placeholder="Descrivi in sintesi le attività principali svolte (es. progettazione, direzione lavori, consulenza fiscale, difesa legale, ecc.)."></textarea>
       </div>
 
       <div>
         <label>Fatturato ultimo esercizio (€)</label>
-        <input name="rc_fatturato" type="number" min="0" step="1000" placeholder="Es: 150000">
+        <input type="number" name="rc_fatturato" min="0" step="1000" placeholder="Es: 150000">
       </div>
 
       <div>
         <label>Massimale richiesto</label>
         <select name="rc_massimale">
           <option value="">Seleziona…</option>
-          <option>250.000 €</option>
-          <option>500.000 €</option>
-          <option>1.000.000 €</option>
-          <option>2.000.000 €</option>
-          <option>Oltre 2.000.000 €</option>
+          <option>€250.000</option>
+          <option>€500.000</option>
+          <option>€1.000.000</option>
+          <option>€2.000.000</option>
+          <option>Oltre €2.000.000</option>
         </select>
       </div>
 
@@ -54,29 +97,26 @@
         <select name="rc_retroattivita">
           <option value="">Seleziona…</option>
           <option>Nessuna</option>
-          <option>1 anno</option>
           <option>2 anni</option>
-          <option>3 anni</option>
           <option>5 anni</option>
-          <option>Illimitata (se possibile)</option>
+          <option>Illimitata</option>
         </select>
       </div>
 
       <div>
-        <label>Richiesta copertura postuma</label>
+        <label>Copertura postuma</label>
         <select name="rc_postuma">
           <option value="">Seleziona…</option>
           <option>No</option>
           <option>1 anno</option>
-          <option>2 anni</option>
           <option>5 anni</option>
-          <option>Altro (specificare nelle note)</option>
+          <option>10 anni</option>
         </select>
       </div>
 
       <div>
-        <label>Numero addetti / collaboratori</label>
-        <input name="rc_addetti" type="number" min="0" placeholder="Es: 3">
+        <label>N. addetti / collaboratori</label>
+        <input type="number" name="rc_addetti" min="0" placeholder="Es: 3">
       </div>
 
       <div>
@@ -91,18 +131,21 @@
       </div>
 
       <div style="grid-column:1/-1">
-        <label>Sinistri / contestazioni ultimi 5 anni</label>
+        <label>Sinistri / contestazioni negli ultimi 5 anni</label>
         <textarea name="rc_sinistri" rows="3" placeholder="Indica eventuali sinistri, richieste di risarcimento o reclami (data, descrizione, importi, stato)."></textarea>
       </div>
 
       <div style="grid-column:1/-1">
         <label>Attività particolari o ad alto rischio</label>
-        <textarea name="rc_attivita_particolari" rows="3" placeholder="Es: direzione lavori strutturali, grandi opere, visti di conformità, perizie complesse, ecc."></textarea>
+        <textarea name="rc_attivita_particolari" rows="3" placeholder="Es: grandi opere, visti di conformità, perizie complesse, incarichi altamente esposti, ecc."></textarea>
       </div>
+    </div>
 
+    <h3 style="margin-top:24px;">Note e allegati</h3>
+    <div class="form-grid">
       <div style="grid-column:1/-1">
         <label>Note aggiuntive</label>
-        <textarea name="notes" rows="3" placeholder="Qualsiasi informazione utile per la quotazione (scadenza polizza attuale, compagnia attuale, richieste specifiche, ecc.)."></textarea>
+        <textarea name="notes" rows="3" placeholder="Es: scadenza polizza attuale, compagnia attuale, richieste particolari, esigenze di prezzo o condizioni."></textarea>
       </div>
 
       <div style="grid-column:1/-1">
@@ -113,7 +156,7 @@
 
     <div class="mt16" style="display:flex;gap:10px">
       <button type="submit">Invia richiesta RC Professionale</button>
-      <a class="secondary button" href="/"><button type="button" class="secondary">Annulla</button></a>
+      <a href="/"><button type="button" class="secondary">Annulla</button></a>
     </div>
   </form>
 </div>

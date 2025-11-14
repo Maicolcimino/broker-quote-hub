@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Richiesta RC Professionale{% endblock %}
+{% block breadcrumb %}<a href="/">Home</a> / Richiesta RC Professionale{% endblock %}
+{% block content %}
+<div class="content-card" style="max-width:860px;margin:0 auto;">
+  <h2 style="margin-top:0;">Richiesta RC Professionale</h2>
+  <p style="font-size:0.9rem;margin-top:4px;margin-bottom:16px;">
+    Compila i dati del cliente e dell’attività professionale per ricevere una quotazione mirata.
+  </p>
+
+  <form method="post" action="/new" enctype="multipart/form-data">
+    <div class="form-grid">
+      <div>
+        <label>Cliente</label>
+        <input name="customer_name" required placeholder="Ragione sociale / Nome e Cognome">
+      </div>
+      <div>
+        <label>CF / P.IVA</label>
+        <input name="customer_tax_id" required>
+      </div>
+
+      {# Ramo fisso, nascosto #}
+      <input type="hidden" name="lob" value="RC Professionale">
+
+      <div>
+        <label>Settore</label>
+        <input name="rc_settore" placeholder="Es: Edilizia, Fiscale/Tributario, Sanitario, IT, ecc.">
+      </div>
+
+      <div>
+        <label>Attività svolta</label>
+        <textarea name="rc_attivita" rows="2" placeholder="Descrivi in sintesi l’attività professionale (es. Ingegnere civile che si occupa di direzione lavori, collaudi, perizie, ecc.)"></textarea>
+      </div>
+
+      <div>
+        <label>Fatturato ultimo esercizio (€)</label>
+        <input name="rc_fatturato" type="number" min="0" step="1000" placeholder="Es: 150000">
+      </div>
+
+      <div>
+        <label>Massimale richiesto</label>
+        <select name="rc_massimale">
+          <option value="">Seleziona…</option>
+          <option>250.000 €</option>
+          <option>500.000 €</option>
+          <option>1.000.000 €</option>
+          <option>2.000.000 €</option>
+          <option>Oltre 2.000.000 €</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Retroattività richiesta</label>
+        <select name="rc_retroattivita">
+          <option value="">Seleziona…</option>
+          <option>Nessuna</option>
+          <option>1 anno</option>
+          <option>2 anni</option>
+          <option>3 anni</option>
+          <option>5 anni</option>
+          <option>Illimitata (se possibile)</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Richiesta copertura postuma</label>
+        <select name="rc_postuma">
+          <option value="">Seleziona…</option>
+          <option>No</option>
+          <option>1 anno</option>
+          <option>2 anni</option>
+          <option>5 anni</option>
+          <option>Altro (specificare nelle note)</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Numero addetti / collaboratori</label>
+        <input name="rc_addetti" type="number" min="0" placeholder="Es: 3">
+      </div>
+
+      <div>
+        <label>Attività anche all’estero?</label>
+        <select name="rc_estero">
+          <option value="">Seleziona…</option>
+          <option>No</option>
+          <option>Sì, UE</option>
+          <option>Sì, Extra UE</option>
+          <option>Sì, UE ed Extra UE</option>
+        </select>
+      </div>
+
+      <div style="grid-column:1/-1">
+        <label>Sinistri / contestazioni ultimi 5 anni</label>
+        <textarea name="rc_sinistri" rows="3" placeholder="Indica eventuali sinistri, richieste di risarcimento o reclami (data, descrizione, importi, stato)."></textarea>
+      </div>
+
+      <div style="grid-column:1/-1">
+        <label>Attività particolari o ad alto rischio</label>
+        <textarea name="rc_attivita_particolari" rows="3" placeholder="Es: direzione lavori strutturali, grandi opere, visti di conformità, perizie complesse, ecc."></textarea>
+      </div>
+
+      <div style="grid-column:1/-1">
+        <label>Note aggiuntive</label>
+        <textarea name="notes" rows="3" placeholder="Qualsiasi informazione utile per la quotazione (scadenza polizza attuale, compagnia attuale, richieste specifiche, ecc.)."></textarea>
+      </div>
+
+      <div style="grid-column:1/-1">
+        <label>Carica documenti (multipli)</label>
+        <input type="file" name="files" multiple>
+      </div>
+    </div>
+
+    <div class="mt16" style="display:flex;gap:10px">
+      <button type="submit">Invia richiesta RC Professionale</button>
+      <a class="secondary button" href="/"><button type="button" class="secondary">Annulla</button></a>
+    </div>
+  </form>
+</div>
+{% endblock %}

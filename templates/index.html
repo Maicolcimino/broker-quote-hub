@@ -1,52 +1,74 @@
-<!doctype html><html><head>
-<meta charset="utf-8"><title>Broker Quote Hub</title>
-<style>
-body{font-family:system-ui;margin:24px;background:#f4f6f8}
-h1{margin-bottom:16px}
-input,select,textarea{padding:8px;margin:4px 0;width:100%;box-sizing:border-box}
-.card{background:#fff;padding:16px;border:1px solid #ddd;border-radius:8px;margin:8px 0;box-shadow:0 2px 4px rgba(0,0,0,.04)}
-.grid{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;align-items:flex-start}
-.btn{padding:8px 14px;border-radius:6px;border:0;cursor:pointer}
-.btn-primary{background:#2563eb;color:#fff}
-.btn-link{background:#e5e7eb;color:#111;text-decoration:none;display:inline-block}
-</style>
-</head><body>
-<h1>Broker Quote Hub</h1>
+{% extends "base.html" %}
 
-<div class="grid">
-  <div class="card">
-    <h3>Nuova richiesta (rami standard)</h3>
-    <form method="post" action="/new">
-      <label>Cliente</label>
-      <input name="customer_name" required>
-      <label>CF / P.IVA</label>
-      <input name="customer_tax_id" required>
-      <label>Ramo</label>
-      <select name="lob">
-        <option>RCA</option>
-        <option>Casa</option>
-        <option>Altro</option>
-      </select>
-      <label>Note</label>
-      <textarea name="notes" rows="3"></textarea>
-      <button type="submit" class="btn btn-primary">Crea</button>
-    </form>
+{% block title %}Dashboard — Broker Quote Hub{% endblock %}
+
+{% block breadcrumb %}
+  <a href="/dashboard">Home</a> / Dashboard
+{% endblock %}
+
+{% block content %}
+<div class="content-card" style="max-width:1100px;margin:0 auto;">
+
+  <h2 style="margin-top:0;margin-bottom:16px;">Broker Quote Hub</h2>
+
+  <div style="display:grid;grid-template-columns:2fr 1.2fr;gap:16px;align-items:flex-start;">
+    <!-- Colonna sinistra: rami standard -->
+    <div class="card" style="background:#fff;padding:16px;border-radius:12px;border:1px solid #e5e7eb;">
+      <h3 style="margin-top:0;margin-bottom:12px;">Nuova richiesta (rami standard)</h3>
+      <form method="post" action="/new">
+        <div class="form-grid">
+          <div>
+            <label>Cliente</label>
+            <input name="customer_name" required>
+          </div>
+          <div>
+            <label>CF / P.IVA</label>
+            <input name="customer_tax_id" required>
+          </div>
+          <div>
+            <label>Ramo</label>
+            <select name="lob">
+              <option>RCA</option>
+              <option>Casa</option>
+              <option>Altro</option>
+            </select>
+          </div>
+          <div style="grid-column:1/-1">
+            <label>Note</label>
+            <textarea name="notes" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="mt16">
+          <button type="submit">Crea richiesta</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Colonna destra: RC Professionale -->
+    <div class="card" style="background:#fff;padding:16px;border-radius:12px;border:1px solid #e5e7eb;">
+      <h3 style="margin-top:0;margin-bottom:8px;">RC Professionale</h3>
+      <p style="font-size:0.9rem;margin-top:0;margin-bottom:16px;">
+        Per le RC Professionali usa il flusso dedicato con i campi specifici (settore, professione, massimale, retroattività, ecc.).
+      </p>
+      <a href="/rc-professionale">
+        <button type="button" class="secondary">Apri modulo RC Professionale ➜</button>
+      </a>
+    </div>
   </div>
 
-  <div class="card">
-    <h3>RC Professionale</h3>
-    <p>Per le RC Professionali usa il flusso guidato in due passi.</p>
-    <a href="/rcp" class="btn btn-link">Apri modulo RC Professionale ➜</a>
-  </div>
+  <h3 style="margin-top:32px;">Richieste aperte</h3>
+  {% if items %}
+    {% for it in items %}
+      <div class="card" style="background:#fff;padding:12px 16px;border-radius:10px;border:1px solid #e5e7eb;margin-bottom:8px;">
+        <b>#{{it.id}}</b> — {{it.customer_name}} ({{it.lob}}){% if it.product %} / {{it.product}}{% endif %}
+        • <a href="/r/{{it.id}}">Apri</a><br>
+        <small>CF/P.IVA: {{it.customer_tax_id}} — {{it.created_at}}</small>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>Nessuna richiesta ancora.</p>
+  {% endif %}
+
 </div>
+{% endblock %}
 
-<h3>Richieste aperte</h3>
-{% for it in items %}
-  <div class="card">
-    <b>#{{it.id}}</b> — {{it.customer_name}} ({{it.lob}}{% if it.product %} / {{it.product}}{% endif %}) • <a href="/r/{{it.id}}">Apri</a><br>
-    <small>CF/P.IVA: {{it.customer_tax_id}} — {{it.created_at}}</small>
-  </div>
-{% else %}
-  <p>Nessuna richiesta ancora.</p>
-{% endfor %}
-</body></html>

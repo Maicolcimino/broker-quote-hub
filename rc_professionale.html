@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Richiesta RC Professionale{% endblock %}
-{% block breadcrumb %}<a href="/">Home</a> / Richiesta RC Professionale{% endblock %}
+{% block breadcrumb %}<a href="/dashboard">Home</a> / Richiesta RC Professionale{% endblock %}
 
 {% block content %}
 <div class="content-card" style="max-width:860px;margin:0 auto;">
@@ -10,7 +10,6 @@
   </p>
 
   <form method="post" action="/new" enctype="multipart/form-data">
-    {# ramo fisso #}
     <input type="hidden" name="lob" value="RC Professionale">
 
     <h3>Dati del cliente</h3>
@@ -29,7 +28,7 @@
     <div class="form-grid">
       <div>
         <label>Settore</label>
-        <select name="rc_settore" required>
+        <select name="rc_settore">
           <option value="">Seleziona…</option>
           <option>Sanitario</option>
           <option>Tecnico</option>
@@ -41,38 +40,12 @@
 
       <div>
         <label>Professione</label>
-        <select name="rc_professione" required>
-          <option value="">Seleziona…</option>
-          <optgroup label="Sanitario">
-            <option>Medico</option>
-            <option>Infermiere</option>
-            <option>Altro sanitario</option>
-          </optgroup>
-          <optgroup label="Tecnico">
-            <option>Ingegnere</option>
-            <option>Architetto</option>
-            <option>Geometra</option>
-            <option>Perito industriale</option>
-          </optgroup>
-          <optgroup label="Legale">
-            <option>Avvocato</option>
-            <option>Altro legale</option>
-          </optgroup>
-          <optgroup label="Economico">
-            <option>Commercialista</option>
-            <option>Consulente del Lavoro</option>
-            <option>Altro economico</option>
-          </optgroup>
-          <optgroup label="Altro">
-            <option>Consulente</option>
-            <option>Altro</option>
-          </optgroup>
-        </select>
+        <input name="rc_professione" placeholder="Es: Ingegnere, Avvocato, Commercialista…">
       </div>
 
       <div style="grid-column:1/-1">
         <label>Descrizione attività svolta</label>
-        <textarea name="rc_attivita" rows="2" placeholder="Descrivi in sintesi le attività principali svolte (es. progettazione, direzione lavori, consulenza fiscale, difesa legale, ecc.)."></textarea>
+        <textarea name="rc_attivita" rows="2" placeholder="Descrivi le attività principali svolte."></textarea>
       </div>
 
       <div>
@@ -131,13 +104,13 @@
       </div>
 
       <div style="grid-column:1/-1">
-        <label>Sinistri / contestazioni negli ultimi 5 anni</label>
-        <textarea name="rc_sinistri" rows="3" placeholder="Indica eventuali sinistri, richieste di risarcimento o reclami (data, descrizione, importi, stato)."></textarea>
+        <label>Sinistri / contestazioni ultimi 5 anni</label>
+        <textarea name="rc_sinistri" rows="3" placeholder="Eventuali sinistri, richieste di risarcimento o reclami."></textarea>
       </div>
 
       <div style="grid-column:1/-1">
         <label>Attività particolari o ad alto rischio</label>
-        <textarea name="rc_attivita_particolari" rows="3" placeholder="Es: grandi opere, visti di conformità, perizie complesse, incarichi altamente esposti, ecc."></textarea>
+        <textarea name="rc_attivita_particolari" rows="3" placeholder="Es: grandi opere, visti di conformità, perizie complesse, ecc."></textarea>
       </div>
     </div>
 
@@ -145,7 +118,7 @@
     <div class="form-grid">
       <div style="grid-column:1/-1">
         <label>Note aggiuntive</label>
-        <textarea name="notes" rows="3" placeholder="Es: scadenza polizza attuale, compagnia attuale, richieste particolari, esigenze di prezzo o condizioni."></textarea>
+        <textarea name="notes" rows="3" placeholder="Es: scadenza polizza attuale, compagnia, richieste particolari, ecc."></textarea>
       </div>
 
       <div style="grid-column:1/-1">
@@ -156,8 +129,10 @@
 
     <div class="mt16" style="display:flex;gap:10px">
       <button type="submit">Invia richiesta RC Professionale</button>
-      <a href="/"><button type="button" class="secondary">Annulla</button></a>
+      <a href="/dashboard"><button type="button" class="secondary">Annulla</button></a>
     </div>
   </form>
 </div>
+{% endblock %}
+
 {% endblock %}

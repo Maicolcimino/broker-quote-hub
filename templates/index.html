@@ -7,68 +7,31 @@
 {% endblock %}
 
 {% block content %}
-<div class="content-card" style="max-width:1100px;margin:0 auto;">
+<div class="tiles">
 
-  <h2 style="margin-top:0;margin-bottom:16px;">Broker Quote Hub</h2>
+  <!-- RC PROFESSIONALE -->
+  <a class="tile" href="/rc-professionale">
+    <svg viewBox="0 0 24 24">
+      <path d="M2 6h9v2H2zm0 4h9v2H2zm0 4h9v2H2zm3 3h14a2 2 0 0 0 2-2V5c0-1.1-.9-2-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z"/>
+    </svg>
+    <div>RC Professionale</div>
+  </a>
 
-  <div style="display:grid;grid-template-columns:2fr 1.2fr;gap:16px;align-items:flex-start;">
-    <!-- Colonna sinistra: rami standard -->
-    <div class="card" style="background:#fff;padding:16px;border-radius:12px;border:1px solid #e5e7eb;">
-      <h3 style="margin-top:0;margin-bottom:12px;">Nuova richiesta (rami standard)</h3>
-      <form method="post" action="/new">
-        <div class="form-grid">
-          <div>
-            <label>Cliente</label>
-            <input name="customer_name" required>
-          </div>
-          <div>
-            <label>CF / P.IVA</label>
-            <input name="customer_tax_id" required>
-          </div>
-          <div>
-            <label>Ramo</label>
-            <select name="lob">
-              <option>RCA</option>
-              <option>Casa</option>
-              <option>Altro</option>
-            </select>
-          </div>
-          <div style="grid-column:1/-1">
-            <label>Note</label>
-            <textarea name="notes" rows="3"></textarea>
-          </div>
-        </div>
-        <div class="mt16">
-          <button type="submit">Crea richiesta</button>
-        </div>
-      </form>
-    </div>
+  <!-- CAUZIONI (per ora solo grafico, lo perfezioniamo dopo) -->
+  <a class="tile" href="#" title="In arrivo">
+    <svg viewBox="0 0 24 24">
+      <path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 15h-2v-2H9v-2h2v-2H9V9h2V7h2v2h2v2h-2v2h2v2h-2Z"/>
+    </svg>
+    <div>Cauzioni</div>
+  </a>
 
-    <!-- Colonna destra: RC Professionale -->
-    <div class="card" style="background:#fff;padding:16px;border-radius:12px;border:1px solid #e5e7eb;">
-      <h3 style="margin-top:0;margin-bottom:8px;">RC Professionale</h3>
-      <p style="font-size:0.9rem;margin-top:0;margin-bottom:16px;">
-        Per le RC Professionali usa il flusso dedicato con i campi specifici (settore, professione, massimale, retroattività, ecc.).
-      </p>
-      <a href="/rc-professionale">
-        <button type="button" class="secondary">Apri modulo RC Professionale ➜</button>
-      </a>
-    </div>
-  </div>
-
-  <h3 style="margin-top:32px;">Richieste aperte</h3>
-  {% if items %}
-    {% for it in items %}
-      <div class="card" style="background:#fff;padding:12px 16px;border-radius:10px;border:1px solid #e5e7eb;margin-bottom:8px;">
-        <b>#{{it.id}}</b> — {{it.customer_name}} ({{it.lob}}){% if it.product %} / {{it.product}}{% endif %}
-        • <a href="/r/{{it.id}}">Apri</a><br>
-        <small>CF/P.IVA: {{it.customer_tax_id}} — {{it.created_at}}</small>
-      </div>
-    {% endfor %}
-  {% else %}
-    <p>Nessuna richiesta ancora.</p>
-  {% endif %}
+  <!-- ALTRI RAMI (placeholder) -->
+  <a class="tile" href="#" title="In arrivo">
+    <svg viewBox="0 0 24 24">
+      <path d="M4 4h16v2H4Zm0 7h16v2H4Zm0 7h16v2H4Z"/>
+    </svg>
+    <div>Altri Rami</div>
+  </a>
 
 </div>
-{% endblock %}
-
+{% endblock %} 
